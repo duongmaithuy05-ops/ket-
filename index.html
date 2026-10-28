@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher: Ms Mai Thuy - End-of-Month Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* ORIGINAL DORAEMON COLOR PALETTE */
+            --dora-blue: #00A0E9;
+            --dora-dark-blue: #006b9e;
+            --dora-red: #E3001B;
+            --dora-yellow: #FFD900;
+            --dora-yellow-dark: #D4B500;
+            --dora-white: #FFFFFF;
+            
+            --correct: #00D26A; 
+            --incorrect: #FF4757; 
+            --bg-card: rgba(255, 255, 255, 0.98);
+            --text-dark: #2D3436;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+
+        body {
+            background-color: var(--dora-blue);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding: 50px 10px 30px 10px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* DORAEMON COLLAR & BELL */
+        .doraemon-collar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 35px;
+            background-color: var(--dora-red);
+            border-bottom: 3px solid #b30015;
+            z-index: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .doraemon-bell {
+            position: fixed;
+            top: 10px; left: 50%;
+            transform: translateX(-50%);
+            width: 75px; height: 75px;
+            background-color: var(--dora-yellow);
+            border-radius: 50%;
+            border: 4px solid var(--dora-yellow-dark);
+            z-index: 1;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .doraemon-bell:hover {
+            transform: translateX(-50%) rotate(15deg) scale(1.1);
+        }
+        .doraemon-bell::before {
+            content: ''; position: absolute;
+            top: 20px; left: -5px; right: -5px;
+            height: 5px; background: var(--dora-yellow-dark);
+        }
+        .doraemon-bell::after {
+            content: ''; position: absolute;
+            top: 35px; left: 50%; transform: translateX(-50%);
+            width: 14px; height: 14px;
+            background: var(--dora-yellow-dark); border-radius: 50%;
+        }
+        .doraemon-bell-line {
+            position: absolute;
+            top: 45px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 25px; background: var(--dora-yellow-dark);
+            z-index: 2;
+        }
+
+        /* Floating Stickers */
+        .pattern {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.9;
+            animation: float-soft 6s ease-in-out infinite;
+            filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15));
+        }
+        @keyframes float-soft {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(8deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        #app-container { max-width: 900px; margin: 0 auto; position: relative; z-index: 10; }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 30px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+            border: 5px solid var(--dora-white);
+        }
+
+        h1, h2, h3 { color: var(--dora-blue); font-weight: 900; }
+        .header-small { font-size: 15px; color: var(--dora-white); text-align: right; font-weight: 900; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);}
+        
+        /* Start Screen */
+        #start-screen { text-align: center; margin-top: 6vh; }
+        input[type="text"] {
+            padding: 16px 25px;
+            font-size: 20px;
+            border-radius: 20px;
+            border: 3px solid var(--dora-blue);
+            width: 80%;
+            max-width: 400px;
+            margin: 20px 0;
+            outline: none;
+            font-weight: bold;
+            color: var(--dora-dark-blue);
+            background-color: #F0F8FF;
+            transition: all 0.3s;
+        }
+        input[type="text"]:focus {
+            background-color: #FFF;
+            box-shadow: 0 0 15px rgba(0, 160, 233, 0.4);
+        }
+        .btn {
+            background: var(--dora-red);
+            color: white;
+            border: none;
+            padding: 16px 45px;
+            font-size: 22px;
+            font-weight: 900;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #b30015;
+            transition: all 0.1s;
+        }
+        .btn:active { transform: translateY(8px); box-shadow: 0 0 0 #b30015; }
+        .btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        /* Top Bar */
+        #top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 45px;
+            z-index: 100;
+            border: 3px solid var(--dora-blue);
+            padding: 15px 25px;
+        }
+        #timer {
+            background: var(--dora-yellow);
+            color: #D35400;
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-size: 24px;
+            font-weight: 900;
+            box-shadow: 0 5px 0 var(--dora-yellow-dark);
+            border: 2px solid #FFF;
+        }
+        .timer-warning { color: var(--incorrect) !important; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        /* Highlight tool */
+        #highlight-btn {
+            background: #ffffff;
+            color: var(--dora-dark-blue);
+            border: 2px solid var(--dora-dark-blue);
+            padding: 10px 18px;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 0 var(--dora-dark-blue);
+            transition: 0.1s;
+        }
+        #highlight-btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--dora-dark-blue); }
+        .highlighted { background-color: var(--dora-yellow); color: #D35400; border-radius: 5px; padding: 2px 4px;}
+
+        /* Question Styles */
+        .question-block { margin-bottom: 35px; padding-bottom: 25px; border-bottom: 3px dashed #E0F4FF; }
+        .question-text { font-size: 19px; font-weight: bold; margin-bottom: 15px; line-height: 1.6; color: #2D3436; }
+        .question-img { max-width: 100%; max-height: 350px; border-radius: 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); margin-bottom: 15px; display: block; border: 3px solid #FFF;}
+        
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .option {
+            background: #FFFFFF;
+            border: 3px solid #DFE6E9;
+            border-radius: 20px;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 5px 0 #DFE6E9;
+            color: #2D3436;
+        }
+        .option:hover:not(.disabled) { transform: scale(1.03); border-color: var(--dora-blue); color: var(--dora-dark-blue);}
+        .option.correct { background: var(--correct) !important; color: #006B3C !important; border-color: #00B894 !important; box-shadow: 0 5px 0 #00B894 !important;}
+        .option.incorrect { background: var(--incorrect) !important; color: white !important; border-color: #D63031 !important; box-shadow: 0 5px 0 #D63031 !important;}
+        .option.disabled { cursor: not-allowed; opacity: 0.9; }
+
+        /* Specific Types */
+        .audio-player { width: 100%; margin: 15px 0; border-radius: 15px; outline: none; }
+        .audio-player::-webkit-media-controls-panel { background-color: #E0F4FF; }
+        
+        .image-card {
+            display: inline-block; text-align: center; margin: 10px; padding: 15px;
+            border: 3px solid var(--dora-blue); border-radius: 20px; background: #FFF;
+            box-shadow: 0 6px 15px rgba(0, 160, 233, 0.15);
+        }
+        .image-card span { font-size: 45px; display: block; margin-bottom: 10px;}
+        .input-gap { border: 3px solid var(--dora-blue); border-radius: 12px; padding: 8px 12px; font-size: 18px; outline: none; font-weight: bold; width: 150px; color: var(--dora-dark-blue); background: #F8F9FA;}
+        
+        .word-bank { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; background: #F0F8FF; padding: 15px; border-radius: 15px; border: 2px dashed var(--dora-blue);}
+        .word-chip { background: var(--dora-white); color: var(--dora-dark-blue); border: 2px solid var(--dora-blue); padding: 8px 18px; border-radius: 20px; font-weight: 900; font-size: 16px; box-shadow: 0 3px 0 var(--dora-blue);}
+        
+        /* Reorder game */
+        .reorder-zone { min-height: 60px; border: 3px dashed var(--dora-blue); border-radius: 15px; padding: 15px; display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px; background: #F0F8FF;}
+        .word-draggable { background: var(--dora-yellow); color: #D35400; padding: 12px 18px; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 0 5px 0 var(--dora-yellow-dark); transition: 0.1s;}
+        .word-draggable:active { transform: translateY(5px); box-shadow: 0 0 0 var(--dora-yellow-dark); }
+
+        /* Explanations */
+        .explanation {
+            display: none;
+            background: #F0F8FF;
+            border-left: 6px solid var(--dora-blue);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 0 20px 20px 0;
+            font-size: 16px;
+            line-height: 1.6;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .explanation h4 { color: var(--dora-red); margin-bottom: 10px; font-size: 18px;}
+        .explanation ul { margin-left: 20px; margin-bottom: 10px; }
+
+        /* Check buttons for text/reorder inputs */
+        .check-btn {
+            background: var(--dora-blue); color: white; border: none; padding: 8px 20px;
+            border-radius: 12px; font-weight: 900; font-size: 16px; cursor: pointer;
+            box-shadow: 0 4px 0 #006b9e; transition: all 0.1s;
+        }
+        .check-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #006b9e; }
+        .check-btn:hover { filter: brightness(1.1); }
+
+        /* Report Screen */
+        #report-screen { display: none; }
+        .score-board { text-align: center; font-size: 40px; color: var(--dora-red); font-weight: 900; margin: 25px 0; }
+        .matrix-table { width: 100%; border-collapse: collapse; margin: 25px 0; border-radius: 20px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+        .matrix-table th, .matrix-table td { border: 2px solid #E2E8F0; padding: 15px; text-align: left; }
+        .matrix-table th { background: var(--dora-blue); color: white; font-size: 18px;}
+        .badge { padding: 6px 12px; border-radius: 15px; font-weight: 900; color: white; font-size: 13px; }
+        .badge.mastered { background: var(--correct); color: #006B3C;}
+        .badge.practice { background: var(--dora-yellow); color: #D35400; }
+        .badge.weakness { background: var(--incorrect); }
+        .root-cause { background: #FFF9E6; padding: 25px; border-radius: 20px; border-left: 6px solid var(--dora-yellow-dark); }
+
+        /* Confetti Canvas */
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+    </style>
+</head>
+<body>
+    <!-- Doraemon Floating Elements -->
+    <div style="font-size:55px; position:fixed; top:12%; left:5%;" class="pattern">🚁</div>
+    <div style="font-size:60px; position:fixed; top:40%; right:8%; animation-delay: 1.5s;" class="pattern">☁️</div>
+    <div style="font-size:50px; position:fixed; bottom:15%; left:8%; animation-delay: 2.5s;" class="pattern">🚪</div>
+    <div style="font-size:55px; position:fixed; top:25%; right:18%; animation-delay: 0.8s;" class="pattern">🥞</div>
+    <div style="font-size:45px; position:fixed; bottom:30%; right:10%; animation-delay: 3s;" class="pattern">⭐</div>
+
+    <!-- Doraemon Collar & Bell -->
+    <div class="doraemon-collar"></div>
+    <div class="doraemon-bell">
+        <div class="doraemon-bell-line"></div>
+    </div>
+
+    <canvas id="confetti"></canvas>
+
+    <div id="app-container">
+        <div class="header-small">Teacher: Ms Mai Thuy</div>
+        
+        <!-- START SCREEN -->
+        <div id="start-screen" class="card">
+            <h1 style="color: var(--dora-blue); font-size: 38px;">End-of-Month Test ✨</h1>
+            <h2 style="color: var(--dora-red); font-size: 24px;">Grade 5 - Global Success</h2>
+            <p style="margin-top: 20px; font-size: 20px; font-weight: bold; color: #636e72;">Enter your name to start! (42 Questions)</p>
+            <input type="text" id="student-name" placeholder="Your name..." autocomplete="off">
+            <br>
+            <button class="btn" onclick="startTest()">START 🚀</button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" style="display: none;">
+            <div id="top-bar" class="card" style="padding: 18px 25px;">
+                <div style="font-weight: 900; font-size: 20px; color: var(--dora-dark-blue);">Student: <span id="display-name" style="color: var(--dora-red);"></span></div>
+                <button id="highlight-btn" onclick="toggleHighlight()">🖍️ Bật / Tắt tô sáng</button>
+                <div id="timer">45:00</div>
+            </div>
+
+            <div class="card" id="questions-container">
+                <!-- Questions generated by JS -->
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" id="submit-btn" style="background: var(--dora-blue); box-shadow: 0 8px 0 #006b99; padding: 18px 50px;" onclick="submitTest()">SUBMIT TEST 🏆</button>
+            </div>
+        </div>
+
+        <!-- REPORT SCREEN -->
+        <div id="report-screen" class="card">
+            <h1 style="text-align: center; color: var(--dora-dark-blue); font-size: 36px;">🎉 SCORE REPORT 🎉</h1>
+            <div class="score-board">
+                <span id="final-name" style="color: var(--dora-dark-blue);"></span> scored: <br>
+                <span id="final-score" style="font-size: 60px; color: var(--dora-red); text-shadow: 2px 2px 0px #FFEAA7;"></span>
+                <div id="final-score-10" style="font-size: 40px; color: var(--dora-blue); margin-top: 10px;"></div>
+            </div>
+            
+            <h3>📊 Knowledge Matrix (42 Questions)</h3>
+            <table class="matrix-table" id="matrix-body">
+                <tr><th>Category</th><th>Accuracy</th><th>Level</th></tr>
+                <!-- Generated by JS -->
+            </table>
+
+            <div class="root-cause">
+                <h3 style="color: #D35400; font-size: 22px;">👩‍🏫 Teacher's Feedback:</h3>
+                <p id="teacher-advice" style="margin-top: 12px; font-size: 18px; line-height: 1.6; font-weight: bold; color: var(--text-dark);"></p>
+            </div>
+        </div>
+    </div>
+
+<script>
+const quizData = [
+    // I. Phonetics / Stress
+    {
+        id: "q1",
+        matrix: "MCQ - Trắc nghiệm A, B, C, D (Ngữ âm - Trọng âm)",
+        type: "mcq",
+        instruction: "I. Choose the word, which has a different stress pattern from the others.",
+        question: "1.",
+        options: ["Japan", "China", "England"],
+        correct: 0,
+        explanation: {
+            translate: "Dịch: Chọn từ có trọng âm khác với các từ còn lại.",
+            opts: ["A. Japan /dʒəˈpæn/: Trọng âm rơi vào âm tiết thứ hai.", "B. China /ˈtʃaɪnə/: Trọng âm rơi vào âm tiết thứ nhất.", "C. England /ˈɪŋɡlənd/: Trọng âm rơi vào âm tiết thứ nhất."],
+            whyCorrect: "Từ 'Japan' có trọng âm rơi vào âm tiết thứ 2, khác với các từ còn lại nhấn âm 1[cite: 1].",
+            whyIncorrect: "China và England đều là tên quốc gia có 2 âm tiết nhấn âm đầu tiên theo quy tắc chung."
+        }
+    },
+    {
+        id: "q2",
+        matrix: "MCQ - Trắc nghiệm A, B, C, D (Ngữ âm - Trọng âm)",
+        type: "mcq",
+        question: "2.",
+        options: ["arrive", "travel", "repeat"],
+        correct: 1,
+        explanation: {
+            translate: "Dịch: Chọn từ có trọng âm khác với các từ còn lại.",
+            opts: ["A. arrive /əˈraɪv/: Trọng âm rơi vào âm tiết thứ hai.", "B. travel /ˈtrævl/: Trọng âm rơi vào âm tiết thứ nhất.", "C. repeat /rɪˈpiːt/: Trọng âm rơi vào âm tiết thứ hai."],
+            whyCorrect: "Từ 'travel' là động từ 2 âm tiết nhưng kết thúc bằng âm nhẹ /əl/ nên nhấn âm 1[cite: 1].",
+            whyIncorrect: "Các động từ 2 âm tiết thông thường như arrive, repeat đều nhấn âm 2."
+        }
+    },
+    {
+        id: "q3",
+        matrix: "MCQ - Trắc nghiệm A, B, C, D (Ngữ âm - Trọng âm)",
+        type: "mcq",
+        question: "3.",
+        options: ["British", "Chinese", "English"],
+        correct: 1,
+        explanation: {
+            translate: "Dịch: Chọn từ có trọng âm khác với các từ còn lại.",
+            opts: ["A. British /ˈbrɪtɪʃ/: Trọng âm rơi vào âm tiết thứ nhất.", "B. Chinese /tʃaɪˈniːz/: Trọng âm rơi vào âm tiết thứ hai.", "C. English /ˈɪŋɡlɪʃ/: Trọng âm rơi vào âm tiết thứ nhất."],
+            whyCorrect: "Từ kết thúc bằng đuôi '-ese' (Chinese, Vietnamese) trọng âm luôn rơi vào chính nó (âm 2)[cite: 1].",
+            whyIncorrect: "Các từ chỉ quốc tịch kết thúc bằng đuôi '-ish' trọng âm rơi vào âm tiết trước nó (âm 1)."
+        }
+    },
+    // II. Listening 1
+    {
+        id: "q4",
+        matrix: "Matching/Numbering - Nghe và điền số vào ô trống dưới hình ảnh",
+        type: "matching",
+        instruction: "II. Listen and number.<br><audio class='audio-player' controls src='audio 1 bài II.mp3'></audio>",
+        question: "<img src='bài II.png' onerror=\"this.src='bài II.jpg'\" class='question-img' alt='Listening 1'>",
+        images: [
+            { icon: "a.", label: "", id: "img_a" },
+            { icon: "b.", label: "", id: "img_b" },
+            { icon: "c.", label: "", id: "img_c" },
+            { icon: "d.", label: "", id: "img_d" },
+            { icon: "e.", label: "", id: "img_e" }
+        ],
+        correct: { "img_a": "1", "img_b": "4", "img_c": "5", "img_d": "2", "img_e": "3" },
+        explanation: {
+            translate: "Dịch: Nghe và đánh số thứ tự các bức tranh a, b, c, d, e.",
+            opts: ["a. Sinh nhật (1)", "b. Chơi với mèo (4)", "c. Đi dạo quanh hồ (5)", "d. Chơi vĩ cầm (2)", "e. Địa chỉ/Tòa nhà (3)"],
+            whyCorrect: "Dựa vào kịch bản nghe (Transcript): 'Lucy is my best friend... lives in a flat in the Sun Street (e). In her free time, she likes playing with her cat (b). She also enjoys playing the violin (d)... At the weekend, go for a walk together around the lake (c).'[cite: 1]",
+            whyIncorrect: "Học sinh cần lắng nghe theo đúng trình tự thời gian bài nói để đánh số chính xác."
+        }
+    },
+    // III. Listening 2
+    {
+        id: "q5",
+        matrix: "Matching/Numbering - Nghe và điền số vào ô trống dưới hình ảnh",
+        type: "matching",
+        instruction: "III. Listen and number.<br><audio class='audio-player' controls src='audio 2 bài III.mp3'></audio>",
+        question: "<img src='bài III.png' onerror=\"this.src='bài III.jpg'\" class='question-img' alt='Listening 2'>",
+        images: [
+            { icon: "A.", label: "", id: "img_A" },
+            { icon: "B.", label: "", id: "img_B" },
+            { icon: "C.", label: "", id: "img_C" },
+            { icon: "D.", label: "", id: "img_D" },
+            { icon: "E.", label: "", id: "img_E" }
+        ],
+        correct: { "img_A": "1", "img_B": "2", "img_C": "5", "img_D": "4", "img_E": "3" },
+        explanation: {
+            translate: "Dịch: Nghe các đoạn hội thoại và đánh số tranh A, B, C, D, E tương ứng.",
+            opts: ["A. Chơi đàn (1)", "B. Nhà trên núi (2)", "C. Quốc tịch Malaysia (5)", "D. Địa chỉ tòa nhà (4)", "E. Sở thích động vật (3)"],
+            whyCorrect: "Transcript: Đoạn 1 nhắc đến sở thích chơi violin (A). Đoạn 2 nhắc đến nhà trên núi (B). Đoạn 3 hỏi về lính cứu hỏa/sở thích (E). Đoạn 4 đọc địa chỉ nhà (D). Đoạn 5 hỏi về quốc tịch Malaysian (C)[cite: 1].",
+            whyIncorrect: "Học sinh cần bắt đúng Keywords trong từng đoạn hội thoại ngắn."
+        }
+    },
+    // IV. Reading MCQ
+    {
+        id: "q6",
+        matrix: "MCQ - Trắc nghiệm A, B, C, D (Từ vựng - Giao tiếp)",
+        type: "mcq",
+        instruction: "IV. Read and choose the correct answer.",
+        question: "1. Do you have a cat?<br><img src='ảnh 1 bài IV.png' class='question-img' onerror=\"this.style.display='none'\">",
+        options: ["A. Yes, I do. I have a cat.", "B. No, I don't.", "C. I like cats."],
+        correct: 0,
+        explanation: {
+            translate: "Dịch: Bạn có nuôi một con mèo không?",
+            opts: ["A. Có. Tớ có một bé mèo.", "B. Không.", "C. Tớ thích mèo."],
+            whyCorrect: "Câu hỏi Yes/No với 'Do'. Câu A trả lời 'Yes, I do' và có hình ảnh cậu bé đang ôm con mèo xác nhận thông tin[cite: 1].",
+            whyIncorrect: "B sai với hình ảnh. C sai vì trả lời lạc đề (người ta hỏi có nuôi không chứ không hỏi sở thích)."
+        }
+    },
+    {
+        id: "q7",
+        matrix: "MCQ - Trắc nghiệm A, B, C, D (Từ vựng - Giao tiếp)",
+        type: "mcq",
+        question: "2. What's your favourite sport?<br><img src='ảnh 2 bài IV.png' class='question-img' onerror=\"this.style.display='none'\">",
+        options: ["A. It's volleyball.", "B. It's table tennis.", "C. It's badminton."],
+        correct: 1,
+        explanation: {
+            translate: "Dịch: Môn thể thao yêu thích của bạn là gì?",
+            opts: ["A. Là bóng chuyền.", "B. Là bóng bàn.", "C. Là cầu lông."],
+            whyCorrect: "Dựa vào hình ảnh minh họa là bàn bóng bàn và vợt -> 'Table tennis'[cite: 1].",
+            whyIncorrect: "Volleyball (bóng chuyền) và Badminton (cầu lông) không khớp với hình ảnh."
+        }
+    },
+    {
+        id: "q8",
+        matrix: "MCQ - Trắc nghiệm A, B, C, D (Từ vựng - Giao tiếp)",
+        type: "mcq",
+        question: "3. What nationality is he?<br><img src='ảnh 3 bài IV.png' class='question-img' onerror=\"this.style.display='none'\">",
+        options: ["A. He's American.", "B. He's from Thailand.", "C. He's Malaysian."],
+        correct: 2,
+        explanation: {
+            translate: "Dịch: Quốc tịch của anh ấy là gì?",
+            opts: ["A. Anh ấy là người Mỹ.", "B. Anh ấy đến từ Thái Lan.", "C. Anh ấy là người Malaysia."],
+            whyCorrect: "Hình ảnh là Cờ quốc gia Malaysia. Cấu trúc hỏi quốc tịch yêu cầu trả lời bằng danh từ chỉ quốc tịch (Malaysian)[cite: 1].",
+            whyIncorrect: "A sai hình ảnh. B dùng cấu trúc 'from + Tên quốc gia' để chỉ xuất xứ, không phải từ chỉ quốc tịch."
+        }
+    },
+    {
+        id: "q9",
+        matrix: "MCQ - Trắc nghiệm A, B, C, D (Ngữ pháp - Cấu trúc câu)",
+        type: "mcq",
+        question: "4. What do you like doing in your free time?<br><img src='ảnh 4 bài IV.png' class='question-img' onerror=\"this.style.display='none'\">",
+        options: ["A. I play the violin at the weekend.", "B. I like playing the violin.", "C. I like playing the guitar."],
+        correct: 1,
+        explanation: {
+            translate: "Dịch: Bạn thích làm gì trong thời gian rảnh?",
+            opts: ["A. Tớ chơi đàn vĩ cầm vào cuối tuần.", "B. Tớ thích chơi đàn vĩ cầm.", "C. Tớ thích chơi ghi-ta."],
+            whyCorrect: "Cấu trúc hỏi sở thích 'like + V-ing' -> Câu trả lời cần tương ứng 'I like + V-ing'. B khớp hình ảnh cô gái kéo đàn vĩ cầm[cite: 1].",
+            whyIncorrect: "A trả lời thói quen (hiện tại đơn) thay vì cấu trúc sở thích được hỏi. C sai hình ảnh."
+        }
+    },
+    {
+        id: "q10",
+        matrix: "MCQ - Trắc nghiệm A, B, C, D (Từ vựng - Giao tiếp)",
+        type: "mcq",
+        question: "5. Do you live in a flat?<br><img src='ảnh 5 bài IV.png' class='question-img' onerror=\"this.style.display='none'\">",
+        options: ["A. No, I don't. I live in a small house in the city.", "B. Yes, I do.", "C. No, I don't. I live in a small house in the mountains."],
+        correct: 2,
+        explanation: {
+            translate: "Dịch: Bạn sống trong một căn hộ chung cư phải không?",
+            opts: ["A. Không. Tớ sống trong nhà nhỏ ở thành phố.", "B. Đúng vậy.", "C. Không. Tớ sống trong nhà nhỏ trên núi."],
+            whyCorrect: "Hình ảnh minh họa là một ngôi nhà giữa những ngọn núi (mountains)[cite: 1].",
+            whyIncorrect: "A sai bối cảnh (city). B sai vì trong hình là nhà riêng (house) chứ không phải căn hộ (flat)."
+        }
+    },
+    // V. Gap Fill
+    {
+        id: "q11",
+        matrix: "Gap Fill - Điền từ vào chỗ trống trong đoạn văn, có Word bank",
+        type: "fill",
+        instruction: "V. Read and fill in each gap with one word. There is ONE extra word.",
+        wordBank: ["walk", "yourself", "favourite", "town", "because", "watering"],
+        question: "Dear pen-friend,<br>My name's Emma. I live in a small [1] ______ in Australia. I love being outside, especially going for a [2] ______ in the park. I want to be a doctor [3] ______ I want to help people when they don't feel well. My [4] ______ animal is a dog. I have a nice dog, Max, and I take good care of him. In my free time, I enjoy [5] ______ the flowers in the garden. It helps me relax after a busy day. What about you? What are your hobbies?",
+        correct: ["town", "walk", "because", "favourite", "watering"],
+        explanation: {
+            translate: "Dịch bài: Tên tớ là Emma. Tớ sống ở một (thị trấn) nhỏ ở Úc. Tớ thích ra ngoài, đặc biệt là đi (dạo) trong công viên. Tớ muốn thành bác sĩ (bởi vì) tớ muốn giúp mọi người. Động vật (yêu thích) của tớ là chó. Rảnh rỗi tớ thích (tưới) hoa...",
+            opts: ["town: thị trấn", "walk: đi dạo", "because: bởi vì", "favourite: yêu thích", "watering: tưới/chăm sóc (hoa)", "yourself (từ thừa): chính bạn"],
+            whyCorrect: "1. 'a small town' (thị trấn nhỏ). 2. Cụm từ cố định 'go for a walk' (đi dạo). 3. Mệnh đề chỉ nguyên nhân dùng 'because'. 4. Cụm danh từ 'favourite animal'. 5. Sau động từ 'enjoy' cần V-ing, tưới hoa là 'watering'[cite: 1].",
+            whyIncorrect: "Từ 'yourself' là đại từ phản thân không phù hợp với bất kỳ chỗ trống nào."
+        }
+    },
+    // VI. Look and complete
+    {
+        id: "q12",
+        matrix: "Input - Nhập câu trả lời ngắn (Từ vựng - Viết)",
+        type: "input",
+        instruction: "VI. Look and complete. Write NO MORE THAN THREE WORDS.",
+        question: "<img src='ảnh 1 bài VI.png' class='question-img' style='max-width:250px;' onerror=\"this.style.display='none'\"><br>1. I live in _________________.",
+        correct: ["Sunflower building", "sunflower building", "the sunflower building"],
+        explanation: {
+            translate: "Dịch: Tôi sống trong toà nhà Sunflower.",
+            opts: ["Từ cần điền: Sunflower building"],
+            whyCorrect: "Hình ảnh có chữ 'SUNFLOWER BUILDING' rõ ràng. Cần điền chính xác tên này[cite: 1].",
+            whyIncorrect: "Viết sai chính tả hoặc sai tên tòa nhà."
+        }
+    },
+    {
+        id: "q13",
+        matrix: "Input - Nhập câu trả lời ngắn (Từ vựng - Viết)",
+        type: "input",
+        question: "<img src='ảnh 2 bài VI.png' class='question-img' style='max-width:250px;' onerror=\"this.style.display='none'\"><br>2. My favourite animal is a _________________.",
+        correct: ["rabbit"],
+        explanation: {
+            translate: "Dịch: Loài động vật yêu thích của tôi là thỏ.",
+            opts: ["Từ cần điền: rabbit"],
+            whyCorrect: "Hình ảnh minh họa một chú thỏ (rabbit)[cite: 1].",
+            whyIncorrect: "Điền từ sai chính tả hoặc con vật khác."
+        }
+    },
+    {
+        id: "q14",
+        matrix: "Input - Nhập câu trả lời ngắn (Từ vựng - Viết)",
+        type: "input",
+        question: "<img src='ảnh 3 bài VI.png' class='question-img' style='max-width:250px;' onerror=\"this.style.display='none'\"><br>3. My favourite sport is _________________.",
+        correct: ["table tennis", "playing table tennis"],
+        explanation: {
+            translate: "Dịch: Môn thể thao yêu thích của tôi là bóng bàn.",
+            opts: ["Từ cần điền: table tennis"],
+            whyCorrect: "Hình ảnh minh họa cậu bé đang đánh bóng bàn (table tennis)[cite: 1].",
+            whyIncorrect: "Nhầm lẫn sang môn thể thao khác."
+        }
+    },
+    {
+        id: "q15",
+        matrix: "Input - Nhập câu trả lời ngắn (Từ vựng - Viết)",
+        type: "input",
+        question: "<img src='ảnh 4 bài VI.png' class='question-img' style='max-width:250px;' onerror=\"this.style.display='none'\"><br>4. I usually _________________ in my free time.",
+        correct: ["water the flowers", "water flowers"],
+        explanation: {
+            translate: "Dịch: Tôi thường tưới hoa trong thời gian rảnh.",
+            opts: ["Từ cần điền: water the flowers"],
+            whyCorrect: "Cậu bé đang cầm bình tưới để tưới hoa. Cụm từ đúng là 'water the flowers'[cite: 1].",
+            whyIncorrect: "Chỉ viết 'water' thì thiếu tân ngữ, sai ngữ cảnh."
+        }
+    },
+    // VII. Reorder
+    {
+        id: "q16",
+        matrix: "Reorder - Sắp xếp từ thành câu",
+        type: "reorder",
+        instruction: "VII. Nam is writing about his friend. Reorder the words to make correct sentences.",
+        question: "1. name / is / My / Hung. / best friend's",
+        words: ["name", "is", "My", "Hung.", "best friend's"],
+        correct: "My best friend's name is Hung.",
+        explanation: {
+            translate: "Dịch: Tên của người bạn thân nhất của tôi là Hùng.",
+            opts: ["Cấu trúc Sở hữu cách: My best friend's + Noun (name) + is + Tên riêng."],
+            whyCorrect: "Chủ ngữ là cụm 'My best friend's name', động từ tobe 'is', tân ngữ là tên riêng 'Hung.' có dấu chấm kết thúc câu[cite: 1].",
+            whyIncorrect: "Sắp xếp sai trật tự từ sẽ làm sai ngữ pháp của sở hữu cách."
+        }
+    },
+    {
+        id: "q17",
+        matrix: "Reorder - Sắp xếp từ thành câu",
+        type: "reorder",
+        question: "2. in / lives / He / flat. / a",
+        words: ["in", "lives", "He", "flat.", "a"],
+        correct: "He lives in a flat.",
+        explanation: {
+            translate: "Dịch: Cậu ấy sống trong một căn hộ.",
+            opts: ["Cấu trúc: S + V + giới từ + nơi chốn."],
+            whyCorrect: "Chủ ngữ 'He' đứng đầu, động từ 'lives', giới từ 'in', mạo từ 'a' đi kèm danh từ nơi chốn 'flat.'[cite: 1].",
+            whyIncorrect: "Đảo vị trí giới từ hoặc mạo từ đều làm câu vô nghĩa."
+        }
+    },
+    {
+        id: "q18",
+        matrix: "Reorder - Sắp xếp từ thành câu",
+        type: "reorder",
+        question: "3. is / school subject / His / English. / favourite",
+        words: ["is", "school subject", "His", "English.", "favourite"],
+        correct: "His favourite school subject is English.",
+        explanation: {
+            translate: "Dịch: Môn học trên trường yêu thích của cậu ấy là Tiếng Anh.",
+            opts: ["Cấu trúc: Possessive Adj + favourite + Noun + is + Noun."],
+            whyCorrect: "Tính từ sở hữu 'His' + cụm danh từ 'favourite school subject' đóng vai trò chủ ngữ[cite: 1].",
+            whyIncorrect: "Sắp xếp sai cụm danh từ làm sai nghĩa của câu."
+        }
+    },
+    {
+        id: "q19",
+        matrix: "Reorder - Sắp xếp từ thành câu",
+        type: "reorder",
+        question: "4. often / At / books / he / the weekend, / reads",
+        words: ["often", "At", "books", "he", "the weekend,", "reads"],
+        correct: "At the weekend, he often reads books.",
+        explanation: {
+            translate: "Dịch: Vào cuối tuần, cậu ấy thường đọc sách.",
+            opts: ["Cấu trúc trạng ngữ chỉ thời gian đứng đầu câu, ngăn cách bằng dấu phẩy."],
+            whyCorrect: "Trạng ngữ 'At the weekend,' đứng trước. Sau đó là chủ ngữ 'he', trạng từ chỉ tần suất 'often' đứng trước động từ thường 'reads books'[cite: 1].",
+            whyIncorrect: "Sai vị trí trạng từ chỉ tần suất."
+        }
+    },
+    {
+        id: "q20",
+        matrix: "Reorder - Sắp xếp từ thành câu",
+        type: "reorder",
+        question: "5. nationality / What / she? / is",
+        words: ["What", "nationality", "is", "she?"],
+        correct: "What nationality is she?",
+        explanation: {
+            translate: "Dịch: Quốc tịch của cô ấy là gì?",
+            opts: ["Cấu trúc hỏi quốc tịch: What nationality + is + he/she?"],
+            whyCorrect: "Đảm bảo đúng cấu trúc từ để hỏi 'What nationality' đi với tobe 'is' và chủ ngữ 'she?'.",
+            whyIncorrect: "Sắp xếp sai trật tự từ hỏi sẽ làm sai cấu trúc ngữ pháp cơ bản."
+        }
+    },
+    // VIII. Odd one out (5 questions)
+    {
+        id: "q21",
+        matrix: "Odd one out - Chọn từ khác loại",
+        type: "mcq",
+        instruction: "VIII. Extra Practice: Circle the odd one out.",
+        question: "1. Choose the odd one out:",
+        options: ["A. tiger", "B. cat", "C. pink", "D. rabbit"],
+        correct: 2,
+        explanation: {
+            translate: "Dịch: Chọn từ khác loại với các từ còn lại.",
+            opts: ["A. tiger (con hổ)", "B. cat (con mèo)", "C. pink (màu hồng)", "D. rabbit (con thỏ)"],
+            whyCorrect: "Từ 'pink' chỉ màu sắc, 3 từ còn lại đều chỉ các loài động vật (animal)[cite: 2].",
+            whyIncorrect: "Phải chọn từ không cùng nhóm chủ đề với các từ khác."
+        }
+    },
+    {
+        id: "q22",
+        matrix: "Odd one out - Chọn từ khác loại",
+        type: "mcq",
+        question: "2. Choose the odd one out:",
+        options: ["A. bread", "B. mountain", "C. countryside", "D. city"],
+        correct: 0,
+        explanation: {
+            translate: "Dịch: Chọn từ khác loại với các từ còn lại.",
+            opts: ["A. bread (bánh mì)", "B. mountain (ngọn núi)", "C. countryside (vùng quê)", "D. city (thành phố)"],
+            whyCorrect: "Từ 'bread' chỉ đồ ăn, 3 từ còn lại đều chỉ các địa điểm (places)[cite: 2].",
+            whyIncorrect: "Phải chọn từ không cùng nhóm chủ đề với các từ khác."
+        }
+    },
+    {
+        id: "q23",
+        matrix: "Odd one out - Chọn từ khác loại",
+        type: "mcq",
+        question: "3. Choose the odd one out:",
+        options: ["A. blue", "B. white", "C. class", "D. yellow"],
+        correct: 2,
+        explanation: {
+            translate: "Dịch: Chọn từ khác loại với các từ còn lại.",
+            opts: ["A. blue (màu xanh)", "B. white (màu trắng)", "C. class (lớp học)", "D. yellow (màu vàng)"],
+            whyCorrect: "Từ 'class' chỉ danh từ trường học, 3 từ còn lại đều chỉ màu sắc (colour)[cite: 2].",
+            whyIncorrect: "Phải chọn từ không cùng nhóm chủ đề với các từ khác."
+        }
+    },
+    {
+        id: "q24",
+        matrix: "Odd one out - Chọn từ khác loại",
+        type: "mcq",
+        question: "4. Choose the odd one out:",
+        options: ["A. live", "B. house", "C. flat", "D. street"],
+        correct: 0,
+        explanation: {
+            translate: "Dịch: Chọn từ khác loại với các từ còn lại.",
+            opts: ["A. live (động từ: sinh sống)", "B. house (ngôi nhà)", "C. flat (căn hộ)", "D. street (con đường)"],
+            whyCorrect: "Từ 'live' là động từ, 3 từ còn lại đều là danh từ chỉ nơi ở/địa điểm[cite: 2].",
+            whyIncorrect: "Phải chọn từ không cùng nhóm loại từ với các từ khác."
+        }
+    },
+    {
+        id: "q25",
+        matrix: "Odd one out - Chọn từ khác loại",
+        type: "mcq",
+        question: "5. Choose the odd one out:",
+        options: ["A. Beijing", "B. Japanese", "C. American", "D. Australian"],
+        correct: 0,
+        explanation: {
+            translate: "Dịch: Chọn từ khác loại với các từ còn lại.",
+            opts: ["A. Beijing (Thủ đô Bắc Kinh)", "B. Japanese (Người Nhật)", "C. American (Người Mỹ)", "D. Australian (Người Úc)"],
+            whyCorrect: "Từ 'Beijing' là tên thành phố, 3 từ còn lại đều chỉ quốc tịch (nationality)[cite: 2].",
+            whyIncorrect: "Phải chọn từ không cùng nhóm chủ đề với các từ khác."
+        }
+    },
+    // IX. True / False (5 questions)
+    {
+        id: "q26",
+        matrix: "True/False - Đọc hiểu đoạn văn",
+        type: "mcq",
+        instruction: "IX. Read the text and decide if the statements are True or False.<br><br><div style='background:#fff; padding:15px; border-radius:15px; border:2px solid var(--dora-blue); font-weight:normal; box-shadow: 0 4px 0 #E2E8F0;'>Hi, my name is Ngan. I live in Ho Chi Minh City. It's a large city in Viet Nam. I live in a house with my parents. My address is 30 Bui Vien Street. I have a sister and a brother. My sister lives in a small flat in Ha Noi. My brother lives in a building in Da Nang. They're both far from us.</div>",
+        question: "1. Ho Chi Minh City is a small city in Viet Nam.",
+        options: ["True", "False"],
+        correct: 1,
+        explanation: {
+            translate: "Dịch: Thành phố Hồ Chí Minh là một thành phố nhỏ ở Việt Nam.",
+            opts: ["True (Đúng)", "False (Sai)"],
+            whyCorrect: "Trong bài đọc ghi rõ: 'It's a large city in Viet Nam' (Đó là một thành phố RỘNG LỚN) -> Câu nhận định là Sai[cite: 2].",
+            whyIncorrect: "Dữ kiện 'small city' mâu thuẫn trực tiếp với văn bản gốc."
+        }
+    },
+    {
+        id: "q27",
+        matrix: "True/False - Đọc hiểu đoạn văn",
+        type: "mcq",
+        question: "2. Ngan lives with her father and mother.",
+        options: ["True", "False"],
+        correct: 0,
+        explanation: {
+            translate: "Dịch: Ngân sống cùng với bố và mẹ của cô ấy.",
+            opts: ["True (Đúng)", "False (Sai)"],
+            whyCorrect: "Trong bài đọc ghi: 'I live in a house with my parents.' (Parents = father and mother) -> Câu nhận định là Đúng[cite: 2].",
+            whyIncorrect: "Câu khẳng định hoàn toàn khớp với chi tiết trong bài."
+        }
+    },
+    {
+        id: "q28",
+        matrix: "True/False - Đọc hiểu đoạn văn",
+        type: "mcq",
+        question: "3. Ngan has one sister and two brothers.",
+        options: ["True", "False"],
+        correct: 1,
+        explanation: {
+            translate: "Dịch: Ngân có một người chị/em gái và hai người anh/em trai.",
+            opts: ["True (Đúng)", "False (Sai)"],
+            whyCorrect: "Trong bài đọc ghi: 'I have a sister and a brother.' (Chỉ có 1 anh/em trai) -> Câu nhận định là Sai[cite: 2].",
+            whyIncorrect: "Số lượng 'two brothers' không khớp với dữ liệu gốc."
+        }
+    },
+    {
+        id: "q29",
+        matrix: "True/False - Đọc hiểu đoạn văn",
+        type: "mcq",
+        question: "4. Her sister lives in Da Nang.",
+        options: ["True", "False"],
+        correct: 1,
+        explanation: {
+            translate: "Dịch: Chị gái của cô ấy sống ở Đà Nẵng.",
+            opts: ["True (Đúng)", "False (Sai)"],
+            whyCorrect: "Trong bài đọc ghi: 'My sister lives in a small flat in Ha Noi.' (Chị gái sống ở Hà Nội, anh trai mới sống ở Đà Nẵng) -> Câu nhận định là Sai[cite: 2].",
+            whyIncorrect: "Thông tin địa điểm bị đánh tráo giữa anh trai và chị gái."
+        }
+    },
+    {
+        id: "q30",
+        matrix: "True/False - Đọc hiểu đoạn văn",
+        type: "mcq",
+        question: "5. Her brother lives in a building.",
+        options: ["True", "False"],
+        correct: 0,
+        explanation: {
+            translate: "Dịch: Anh trai của cô ấy sống trong một tòa nhà.",
+            opts: ["True (Đúng)", "False (Sai)"],
+            whyCorrect: "Trong bài đọc ghi rõ: 'My brother lives in a building in Da Nang.' -> Câu nhận định là Đúng[cite: 2].",
+            whyIncorrect: "Câu khẳng định hoàn toàn khớp với chi tiết trong bài."
+        }
+    }
+];
+
+let isTestSubmitted = false;
+let timerInterval;
+let timeLeft = 2700; // 45 minutes
+let isHighlighting = false;
+
+// Audio Context Generation (No external files)
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playTone(freq, type, duration, vol) {
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + duration);
+}
+function playCorrect() { playTone(600, 'sine', 0.5, 0.5); setTimeout(() => playTone(800, 'sine', 0.5, 0.5), 100); }
+function playIncorrect() { playTone(300, 'sawtooth', 0.4, 0.5); setTimeout(() => playTone(250, 'sawtooth', 0.5, 0.5), 200); }
+
+function shuffleArray(array) {
+    let newArr = [...array];
+    for (let i = newArr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+    }
+    return newArr;
+}
+
+function toggleHighlight() {
+    isHighlighting = !isHighlighting;
+    const btn = document.getElementById('highlight-btn');
+    if(isHighlighting) {
+        btn.style.background = 'var(--dora-yellow)';
+        btn.style.color = '#d35400';
+        document.addEventListener('mouseup', applyHighlight);
+    } else {
+        btn.style.background = '#ffffff';
+        btn.style.color = 'var(--dora-blue)';
+        document.removeEventListener('mouseup', applyHighlight);
+    }
+}
+function applyHighlight() {
+    const selection = window.getSelection();
+    if (!selection.isCollapsed) {
+        const range = selection.getRangeAt(0);
+        const span = document.createElement('span');
+        span.className = 'highlighted';
+        try {
+            range.surroundContents(span);
+        } catch(e) {}
+        selection.removeAllRanges();
+    }
+}
+
+function startTest() {
+    const name = document.getElementById('student-name').value.trim();
+    if (!name) { alert("Please enter your name!"); return; }
+    
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('display-name').innerText = name;
+    
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    renderQuestions();
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        let timerEl = document.getElementById('timer');
+        timerEl.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+        
+        if (timeLeft <= 300) timerEl.classList.add('timer-warning');
+        if (timeLeft <= 0) { clearInterval(timerInterval); submitTest(); }
+    }, 1000);
+}
+
+function renderQuestions() {
+    const container = document.getElementById('questions-container');
+    
+    quizData.forEach((q, index) => {
+        let qHTML = `<div class="question-block" id="block-${q.id}">`;
+        if (q.instruction) qHTML += `<h3 style="margin-bottom: 15px;">${q.instruction}</h3>`;
+        if (q.question) qHTML += `<div class="question-text">${q.question}</div>`;
+
+        if (q.type === 'mcq') {
+            let shuffledOpts = shuffleArray(q.options.map((opt, i) => ({ text: opt, originalIndex: i })));
+            qHTML += `<div class="options-grid">`;
+            shuffledOpts.forEach(opt => {
+                qHTML += `<div class="option" id="opt-${q.id}-${opt.originalIndex}" onclick="selectOption('${q.id}', ${opt.originalIndex})">${opt.text}</div>`;
+            });
+            qHTML += `</div>`;
+        } 
+        else if (q.type === 'matching') {
+            qHTML += `<div style="display:flex; flex-wrap:wrap; gap:10px;">`;
+            q.images.forEach(img => {
+                qHTML += `<div class="image-card"><span style="font-weight:900; color:var(--dora-blue); font-size:24px;">${img.icon}</span>`;
+                if(img.label) qHTML += `<span style="font-size:35px;">${img.label}</span>`;
+                qHTML += `<br><input type="text" class="input-gap" id="match-${q.id}-${img.id}" placeholder="Number..." style="width:100px; text-align:center;"></div>`;
+            });
+            qHTML += `</div>`;
+            qHTML += `<div style="margin-top:10px;"><button class="check-btn" onclick="checkMatchingImmediate('${q.id}')">Kiểm tra câu này 🔍</button></div>`;
+        }
+        else if (q.type === 'fill') {
+            qHTML += `<div class="word-bank">Word bank: `;
+            q.wordBank.forEach(w => qHTML += `<span class="word-chip">${w}</span>`);
+            qHTML += `</div><div style="line-height:2.5; font-size:18px;">`;
+            
+            let text = q.question;
+            for(let i=1; i<=q.correct.length; i++) {
+                text = text.replace(`[${i}] ______`, `<input type="text" class="input-gap" id="fill-${q.id}-${i-1}">`);
+            }
+            qHTML += text + `</div>`;
+            qHTML += `<div style="margin-top:10px;"><button class="check-btn" onclick="checkFillImmediate('${q.id}')">Kiểm tra câu này 🔍</button></div>`;
+        }
+        else if (q.type === 'input') {
+            qHTML += `<input type="text" class="input-gap" id="input-${q.id}" style="width: 80%; max-width: 300px;">`;
+            qHTML += `<div style="margin-top:10px;"><button class="check-btn" onclick="checkInputImmediate('${q.id}')">Kiểm tra câu này 🔍</button></div>`;
+        }
+        else if (q.type === 'reorder') {
+            qHTML += `<div class="reorder-zone" id="zone-${q.id}"></div>`;
+            qHTML += `<div class="word-bank" id="bank-${q.id}">`;
+            shuffleArray(q.words).forEach(w => {
+                qHTML += `<div class="word-draggable" onclick="moveWord(this, '${q.id}')">${w}</div>`;
+            });
+            qHTML += `</div>`;
+            qHTML += `<div style="display:flex; gap:10px;"><button onclick="resetReorder('${q.id}')" style="padding:8px 15px; border-radius:10px; border:2px solid var(--dora-blue); background:#fff; font-weight:bold; color:var(--dora-blue); cursor:pointer;">Reset</button>`;
+            qHTML += `<button class="check-btn" onclick="checkReorderImmediate('${q.id}')">Kiểm tra câu này 🔍</button></div>`;
+        }
+
+        qHTML += `<div class="explanation" id="exp-${q.id}">
+            <h4>💡 Ms Mai Thùy's Explanation:</h4>
+            <p style="margin-bottom:8px;">${q.explanation.translate}</p>
+            <ul>${q.explanation.opts.map(o => `<li>${o}</li>`).join('')}</ul>
+            <p style="color:var(--correct); margin-top:8px;"><b>✅ Vì sao đúng:</b> ${q.explanation.whyCorrect}</p>
+            <p style="color:var(--incorrect); margin-top:8px;"><b>❌ Tránh bẫy:</b> ${q.explanation.whyIncorrect}</p>
+        </div></div>`;
+        
+        container.innerHTML += qHTML;
+    });
+}
+
+let userAnswers = {};
+
+// Instant feedback for MCQ
+function selectOption(qId, optIndex) {
+    if (isTestSubmitted) return;
+    const q = quizData.find(item => item.id === qId);
+    if (!q) return;
+
+    // Remove previous selection formatting
+    document.querySelectorAll(`[id^="opt-${qId}"]`).forEach(el => el.classList.remove('selected', 'correct', 'incorrect'));
+    
+    const selectedEl = document.getElementById(`opt-${qId}-${optIndex}`);
+    selectedEl.classList.add('selected');
+    userAnswers[qId] = optIndex;
+
+    // Immediate check
+    if (optIndex === q.correct) {
+        selectedEl.classList.add('correct');
+        playCorrect();
+    } else {
+        selectedEl.classList.add('incorrect');
+        const correctEl = document.getElementById(`opt-${qId}-${q.correct}`);
+        if (correctEl) correctEl.classList.add('correct');
+        playIncorrect();
+        selectedEl.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}], {duration: 400});
+    }
+
+    // Show explanation immediately
+    const expEl = document.getElementById(`exp-${qId}`);
+    if (expEl) expEl.style.display = 'block';
+}
+
+function checkMatchingImmediate(qId) {
+    if (isTestSubmitted) return;
+    const q = quizData.find(item => item.id === qId);
+    let allCorrect = true;
+
+    for (let key in q.correct) {
+        const inputEl = document.getElementById(`match-${qId}-${key}`);
+        let val = inputEl.value.trim();
+        if (val !== q.correct[key]) {
+            allCorrect = false;
+            inputEl.style.borderColor = 'var(--incorrect)';
+            inputEl.style.backgroundColor = '#ffe6e6';
+            if (!inputEl.parentNode.querySelector('.ans-hint')) {
+                let cSpan = document.createElement('div');
+                cSpan.className = 'ans-hint';
+                cSpan.innerHTML = `<b style="color:var(--correct)">Answer: ${q.correct[key]}</b>`;
+                inputEl.parentNode.appendChild(cSpan);
+            }
+        } else {
+            inputEl.style.borderColor = 'var(--correct)';
+            inputEl.style.backgroundColor = '#e6ffed';
+        }
+    }
+
+    if (allCorrect) playCorrect(); else playIncorrect();
+    const expEl = document.getElementById(`exp-${qId}`);
+    if (expEl) expEl.style.display = 'block';
+}
+
+function checkFillImmediate(qId) {
+    if (isTestSubmitted) return;
+    const q = quizData.find(item => item.id === qId);
+    let allCorrect = true;
+
+    q.correct.forEach((ans, i) => {
+        let el = document.getElementById(`fill-${qId}-${i}`);
+        if (el.value.trim().toLowerCase() === ans.toLowerCase()) {
+            el.style.borderColor = 'var(--correct)';
+            el.style.backgroundColor = '#e6ffed';
+        } else {
+            allCorrect = false;
+            el.style.borderColor = 'var(--incorrect)';
+            el.style.backgroundColor = '#ffe6e6';
+            if (!el.parentNode.querySelector(`.fill-hint-${i}`)) {
+                let cSpan = document.createElement('span');
+                cSpan.className = `fill-hint-${i}`;
+                cSpan.innerHTML = ` <b style="color:var(--correct)">(${ans})</b>`;
+                el.parentNode.insertBefore(cSpan, el.nextSibling);
+            }
+        }
+    });
+
+    if (allCorrect) playCorrect(); else playIncorrect();
+    const expEl = document.getElementById(`exp-${qId}`);
+    if (expEl) expEl.style.display = 'block';
+}
+
+function checkInputImmediate(qId) {
+    if (isTestSubmitted) return;
+    const q = quizData.find(item => item.id === qId);
+    let el = document.getElementById(`input-${qId}`);
+    let val = el.value.trim().toLowerCase();
+    let isCurrentCorrect = q.correct.some(c => c.toLowerCase() === val);
+
+    if (isCurrentCorrect) {
+        el.style.borderColor = 'var(--correct)';
+        el.style.backgroundColor = '#e6ffed';
+        playCorrect();
+    } else {
+        el.style.borderColor = 'var(--incorrect)';
+        el.style.backgroundColor = '#ffe6e6';
+        playIncorrect();
+        if (!el.parentNode.querySelector('.input-hint')) {
+            let cSpan = document.createElement('span');
+            cSpan.className = 'input-hint';
+            cSpan.innerHTML = ` <br><b style="color:var(--correct)">Answer: ${q.correct[0]}</b>`;
+            el.parentNode.insertBefore(cSpan, el.nextSibling);
+        }
+    }
+    const expEl = document.getElementById(`exp-${qId}`);
+    if (expEl) expEl.style.display = 'block';
+}
+
+function checkReorderImmediate(qId) {
+    if (isTestSubmitted) return;
+    const q = quizData.find(item => item.id === qId);
+    const zone = document.getElementById(`zone-${qId}`);
+    let sentence = Array.from(zone.children).map(el => el.innerText).join(' ').trim();
+
+    if (sentence === q.correct) {
+        zone.style.borderColor = 'var(--correct)';
+        zone.style.backgroundColor = '#e6ffed';
+        playCorrect();
+    } else {
+        zone.style.borderColor = 'var(--incorrect)';
+        zone.style.backgroundColor = '#ffe6e6';
+        playIncorrect();
+        if (!zone.parentNode.querySelector('.reorder-hint')) {
+            let cSpan = document.createElement('div');
+            cSpan.className = 'reorder-hint';
+            cSpan.innerHTML = `<b style="color:var(--correct)">Answer: ${q.correct}</b>`;
+            zone.parentNode.insertBefore(cSpan, zone.nextSibling);
+        }
+    }
+    const expEl = document.getElementById(`exp-${qId}`);
+    if (expEl) expEl.style.display = 'block';
+}
+
+function moveWord(el, qId) {
+    if (isTestSubmitted) return;
+    const zone = document.getElementById(`zone-${qId}`);
+    const bank = document.getElementById(`bank-${qId}`);
+    if (el.parentElement.id === `bank-${qId}`) { zone.appendChild(el); } 
+    else { bank.appendChild(el); }
+}
+
+function resetReorder(qId) {
+    if (isTestSubmitted) return;
+    const zone = document.getElementById(`zone-${qId}`);
+    const bank = document.getElementById(`bank-${qId}`);
+    while(zone.firstChild) { bank.appendChild(zone.firstChild); }
+    zone.style.borderColor = 'var(--dora-blue)';
+    zone.style.backgroundColor = '#F0F8FF';
+    const hint = zone.parentNode.querySelector('.reorder-hint');
+    if (hint) hint.remove();
+}
+
+function submitTest() {
+    if (isTestSubmitted) return;
+    if (!confirm("Are you sure you want to submit?")) return;
+    
+    clearInterval(timerInterval);
+    isTestSubmitted = true;
+    document.getElementById('submit-btn').style.display = 'none';
+
+    let total = 42; 
+    let correct = 0;
+    let matrix = {};
+
+    quizData.forEach(q => {
+        let isCorrect = false;
+
+        if (q.type === 'mcq') {
+            if (!matrix[q.matrix]) matrix[q.matrix] = { total: 0, correct: 0 };
+            matrix[q.matrix].total++;
+            
+            if (userAnswers[q.id] === q.correct) { isCorrect = true; correct++; matrix[q.matrix].correct++; }
+            const correctOpt = document.getElementById(`opt-${q.id}-${q.correct}`);
+            if (correctOpt) correctOpt.classList.add('correct');
+            if (userAnswers[q.id] !== undefined && userAnswers[q.id] !== q.correct) {
+                const wrongOpt = document.getElementById(`opt-${q.id}-${userAnswers[q.id]}`);
+                if (wrongOpt) wrongOpt.classList.add('incorrect');
+            }
+        }
+        else if (q.type === 'matching') {
+            for (let key in q.correct) {
+                if (!matrix[q.matrix]) matrix[q.matrix] = { total: 0, correct: 0 };
+                matrix[q.matrix].total++;
+                
+                let val = document.getElementById(`match-${q.id}-${key}`).value.trim();
+                if (val === q.correct[key]) {
+                    correct++; matrix[q.matrix].correct++;
+                }
+                document.getElementById(`match-${q.id}-${key}`).disabled = true;
+            }
+        }
+        else if (q.type === 'fill') {
+            q.correct.forEach((ans, i) => {
+                if (!matrix[q.matrix]) matrix[q.matrix] = { total: 0, correct: 0 };
+                matrix[q.matrix].total++;
+                
+                let el = document.getElementById(`fill-${q.id}-${i}`);
+                if (el.value.trim().toLowerCase() === ans.toLowerCase()) {
+                    correct++; matrix[q.matrix].correct++;
+                }
+                el.disabled = true;
+            });
+        }
+        else if (q.type === 'input') {
+            if (!matrix[q.matrix]) matrix[q.matrix] = { total: 0, correct: 0 };
+            matrix[q.matrix].total++;
+            
+            let el = document.getElementById(`input-${q.id}`);
+            let val = el.value.trim().toLowerCase();
+            if (q.correct.some(c => c.toLowerCase() === val)) {
+                correct++; matrix[q.matrix].correct++;
+            }
+            el.disabled = true;
+        }
+        else if (q.type === 'reorder') {
+            if (!matrix[q.matrix]) matrix[q.matrix] = { total: 0, correct: 0 };
+            matrix[q.matrix].total++;
+            
+            const zone = document.getElementById(`zone-${q.id}`);
+            let sentence = Array.from(zone.children).map(el => el.innerText).join(' ').trim();
+            if (sentence === q.correct) {
+                correct++; matrix[q.matrix].correct++;
+            }
+        }
+        
+        document.getElementById(`exp-${q.id}`).style.display = 'block';
+    });
+
+    if (correct / total >= 0.5) { playCorrect(); fireConfetti(); } else { playIncorrect(); }
+    
+    // Generate Report
+    document.getElementById('report-screen').style.display = 'block';
+    document.getElementById('final-name').innerText = document.getElementById('student-name').value;
+    document.getElementById('final-score').innerText = `${correct}/${total}`;
+    
+    // Thang điểm 10
+    let score10 = ((correct / total) * 10).toFixed(1);
+    document.getElementById('final-score-10').innerText = `Điểm số: ${score10} / 10`;
+
+    let matrixTable = document.getElementById('matrix-body');
+    let worstMatrix = { name: '', percent: 101 };
+
+    for (const [key, value] of Object.entries(matrix)) {
+        let percent = Math.round((value.correct / value.total) * 100);
+        let badge = 'weakness'; let label = 'Weakness';
+        if (percent > 80) { badge = 'mastered'; label = 'Mastered'; }
+        else if (percent >= 50) { badge = 'practice'; label = 'Needs Practice'; }
+
+        if (percent < worstMatrix.percent) { worstMatrix.percent = percent; worstMatrix.name = key; }
+
+        matrixTable.innerHTML += `<tr><td><b>${key}</b></td><td>${percent}% (${value.correct}/${value.total})</td><td><span class="badge ${badge}">${label}</span></td></tr>`;
+    }
+
+    // Root Cause Analysis
+    let advice = `Cô khen ngợi tinh thần làm bài của con! Tuy nhiên, con đang bị hổng kiến thức ở mảng <b>${worstMatrix.name}</b> (chỉ đạt ${worstMatrix.percent}%).<br><br>`;
+    if (worstMatrix.name.includes("Ngữ âm")) advice += "Con cần ôn lại các quy tắc nhấn trọng âm của từ 2 âm tiết và từ có đuôi đặc biệt (-ese, -ish). Hãy dùng Cửa Thần Kỳ mở lại sách giáo khoa và nghe băng phát âm chuẩn nhé!";
+    else if (worstMatrix.name.includes("Nghe hiểu")) advice += "Kỹ năng nghe của con cần luyện tập thêm. Hãy dùng Bánh mì chuyển ngữ để dịch nhanh các từ khóa (keywords) trong câu hỏi trước khi băng bắt đầu chạy nhé.";
+    else if (worstMatrix.name.includes("Từ vựng")) advice += "Con bị nhầm lẫn ở các tình huống giao tiếp thực tế và từ vựng chỉ địa điểm/hoạt động. Hãy làm Bánh Trí Nhớ để học từ vựng theo cụm thay vì học từ đơn lẻ nhé.";
+    else if (worstMatrix.name.includes("Ngữ pháp") || worstMatrix.name.includes("Reorder")) advice += "Cấu trúc câu của con chưa vững, đặc biệt là sở hữu cách và trật tự từ. Con hãy luyện viết các mẫu câu này ra vở để tay quen với cấu trúc giống như Nobita hay bị phạt chép bài vậy nha.";
+    else advice += "Con hãy xem kỹ lại phần Giải thích chi tiết bên dưới bài làm để rút kinh nghiệm. Cố lên nhé!";
+
+    document.getElementById('teacher-advice').innerHTML = advice;
+    
+    setTimeout(() => { document.getElementById('report-screen').scrollIntoView({ behavior: 'smooth' }); }, 500);
+}
+
+function fireConfetti() {
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const pieces = [];
+    for(let i=0; i<120; i++) {
+        pieces.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            size: Math.random() * 12 + 6,
+            color: ['#00A0E9', '#e3001b', '#ffd900', '#ffffff'][Math.floor(Math.random() * 4)],
+            vy: Math.random() * 3 + 2,
+            vx: Math.random() * 2 - 1
+        });
+    }
+    function update() {
+        ctx.clearRect(0,0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+            p.y += p.vy; p.x += p.vx;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size/2, 0, Math.PI*2);
+            ctx.fill();
+        });
+        if(pieces.some(p => p.y < canvas.height)) requestAnimationFrame(update);
+    }
+    update();
+}
+</script>
+</body>
+</html>
